@@ -25,6 +25,10 @@ st.markdown(
 # Título da aplicação
 st.title("Calc-App!")
 
+st.markdown("""
+💬caso esteja usando smartphone, mantenha-o deitado p/ melhor visualização.
+""")
+
 # CSS para estilizar a interface da calculadora
 st.markdown("""
     <style>
@@ -141,5 +145,5 @@ if st.session_state.expression:
 st.markdown("""
 ---
 #### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
-💬 Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
+Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
 """)
