@@ -3,21 +3,40 @@ import math
 import re
 from simpleeval import simple_eval
 
-# Título da aplicação
-st.title("Calculadora Interativa")
+# URL do logo
+logo_url = "https://i.imgur.com/yyDN6aD.png"
 
-# CSS para estilizar a interface da calculadora.
+# Exibindo o logo pela URL
+st.markdown(
+    f"""
+    <style>
+        .centered-logo {{
+            display: flex;
+            justify-content: center;
+        }}
+    </style>
+    <div class="centered-logo">
+        <img src="{logo_url}" width="300">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Título da aplicação
+st.title("Calc-App!")
+
+# CSS para estilizar a interface da calculadora
 st.markdown("""
     <style>
     .stButton>button {
         height: 40px;
-        width: 60px;
-        font-size: 20px;
+        width: 80%;
+        font-size: 30px;
         border-radius: 8px;
         color: black;
         background-color: #f2f2f2;
         border: 1px solid #ccc;
-        margin: 2px;
+        margin: 1px;
     }
 
     .stTextInput>div>div>input {
@@ -27,7 +46,6 @@ st.markdown("""
     }
 
     .stButton { margin: 0; }
-
     </style>
 """, unsafe_allow_html=True)
 
@@ -35,7 +53,7 @@ st.markdown("""
 def calcular(expressao):
     try:
         # Substituir operadores personalizados por operadores matemáticos
-        expressao = expressao.replace("Di", "/").replace("Mu", "*").replace("Su", "-").replace("So", "+")
+        expressao = expressao.replace("\u00F7", "/").replace("\u00D7", "*").replace("\uFF0D", "-").replace("\uFF0B", "+")
 
         # Substituir vírgula por ponto para compatibilidade com Python
         expressao = expressao.replace(",", ".")
@@ -65,17 +83,18 @@ if "expression" not in st.session_state:
 
 # Função para atualizar a expressão
 def atualizar_expressao(valor):
-    if st.session_state.expression == "Erro":
-        st.session_state.expression = valor
-    else:
-        st.session_state.expression += valor
+    # Bloquear operadores no início ou após outro operador
+    if valor in ["\u00F7", "\u00D7", "\uFF0D", "\uFF0B"]:
+        if not st.session_state.expression or st.session_state.expression[-1] in ["\u00F7", "\u00D7", "\uFF0D", "\uFF0B"]:
+            return  # Não adiciona o operador
+    st.session_state.expression += valor
 
-# Botões da calculadora
+# Botões da calculadora (usando ícones Unicode consistentes)
 buttons = [
-    ("7", "8", "9", "Di"),
-    ("4", "5", "6", "Mu"),
-    ("1", "2", "3", "Su"),
-    ("0", ".", "=", "So"),
+    ("7", "8", "9", "\u00F7"),  # ícone de divisão
+    ("4", "5", "6", "\u00D7"),  # ícone de multiplicação
+    ("1", "2", "3", "\uFF0D"),  # ícone de subtração
+    ("0", ".", "=", "\uFF0B"),  # ícone de soma
     ("%", "\u221a", "C", "Del")
 ]
 
@@ -100,7 +119,9 @@ for i, row in enumerate(buttons):
                     # Calcula a raiz quadrada diretamente
                     try:
                         if st.session_state.expression:
-                            st.session_state.expression = str(math.sqrt(float(st.session_state.expression)))
+                            resultado = math.sqrt(float(st.session_state.expression))
+                            # Remover ponto e zero se o resultado for inteiro
+                            st.session_state.expression = str(int(resultado) if resultado.is_integer() else resultado)
                         else:
                             st.session_state.expression = "Erro: Vazio"
                     except ValueError:
@@ -115,3 +136,10 @@ for i, row in enumerate(buttons):
 # Exibir o resultado
 if st.session_state.expression:
     st.markdown(f"<h3>Resultado: {st.session_state.expression}</h3>", unsafe_allow_html=True)
+
+# Informações de contato
+st.markdown("""
+---
+#### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
+💬 Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
+""")
