@@ -6,7 +6,7 @@ from simpleeval import simple_eval
 # Título da aplicação
 st.title("Calculadora Interativa")
 
-# CSS para estilizar a interface da calculadora
+# CSS para estilizar a interface da calculadora.
 st.markdown("""
     <style>
     .stButton>button {
