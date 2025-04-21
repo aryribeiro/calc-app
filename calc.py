@@ -6,7 +6,7 @@ from simpleeval import simple_eval
 # Configuração da página
 st.set_page_config(
     page_title="Calc-App!",
-    layout="centered",
+    layout="wide",  # Usar layout wide para melhor uso do espaço
     initial_sidebar_state="collapsed"
 )
 
@@ -36,15 +36,39 @@ st.markdown(
 )
 
 # Título da aplicação
-st.title("Calc-App!")
+st.markdown("<h1 style='text-align: center;'>Calc-App!</h1>", unsafe_allow_html=True)
 
+st.markdown("<p style='text-align: center;'>💬 Bem-vindos ao meu web app!</p>", unsafe_allow_html=True)
+
+# CSS para estilizar a interface da calculadora
 st.markdown("""
-💬 Bem-vindos ao meu web app!
-""")
-
-# Variáveis para controlar a expressão
-if "expression" not in st.session_state:
-    st.session_state.expression = ""
+    <style>
+    /* Estilo dos botões e contêiner da calculadora */
+    .stButton > button {
+        width: 100%;
+        height: 50px;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    
+    /* Garantir que o texto do visor seja preto */
+    div[data-testid="stText"] > div > p {
+        color: black !important;
+        font-weight: bold !important;
+        font-size: 24px !important;
+        text-align: right !important;
+    }
+    
+    /* Melhorias para telas pequenas */
+    @media (max-width: 768px) {
+        .stButton > button {
+            height: 45px;
+            font-size: 18px;
+        }
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # Função para realizar os cálculos com validação básica
 def calcular(expressao):
@@ -74,37 +98,9 @@ def calcular(expressao):
     except Exception as e:
         return f"Erro: {str(e)}"
 
-# Processar botões e ações
-def processar_acao(acao):
-    if acao == "=":
-        # Quando o usuário clicar em igual, faz o cálculo
-        st.session_state.expression = str(calcular(st.session_state.expression))
-    elif acao == "C":
-        # Limpa a expressão
-        st.session_state.expression = ""
-    elif acao == "Del":
-        # Apaga o último caractere
-        st.session_state.expression = st.session_state.expression[:-1]
-    elif acao == "\u221a":
-        # Calcula a raiz quadrada diretamente
-        try:
-            if st.session_state.expression:
-                resultado = math.sqrt(float(st.session_state.expression))
-                # Remover ponto e zero se o resultado for inteiro
-                st.session_state.expression = str(int(resultado) if resultado.is_integer() else resultado)
-            else:
-                st.session_state.expression = "Erro: Vazio"
-        except ValueError:
-            st.session_state.expression = "Erro"
-    elif acao == "%":
-        # Adiciona o símbolo de porcentagem para ser tratado na função calcular
-        atualizar_expressao(acao)
-    else:
-        # Adiciona o número ou operador personalizado à expressão
-        atualizar_expressao(acao)
-    
-    # Forçar recarregamento da página
-    st.rerun()
+# Variáveis para controlar a expressão
+if "expression" not in st.session_state:
+    st.session_state.expression = ""
 
 # Função para atualizar a expressão
 def atualizar_expressao(valor):
@@ -113,162 +109,79 @@ def atualizar_expressao(valor):
         if not st.session_state.expression or st.session_state.expression[-1] in ["\u00F7", "\u00D7", "\uFF0D", "\uFF0B"]:
             return  # Não adiciona o operador
     st.session_state.expression += valor
-
-# Botões da calculadora (usando ícones Unicode consistentes)
-buttons = [
-    ["7", "8", "9", "\u00F7"],  # ícone de divisão
-    ["4", "5", "6", "\u00D7"],  # ícone de multiplicação
-    ["1", "2", "3", "\uFF0D"],  # ícone de subtração
-    ["0", ".", "=", "\uFF0B"],  # ícone de soma
-    ["%", "\u221a", "C", "Del"]
-]
-
-# Criando um CSS personalizado para a calculadora
-st.markdown("""
-<style>
-    /* Estilo para o contêiner principal da calculadora */
-    .calculator {
-        max-width: 400px;
-        margin: 0 auto;
-        font-family: Arial, sans-serif;
-    }
     
-    /* Estilo para o display */
-    .calc-display {
-        width: 100%;
-        height: 60px;
+# Colunas para centralizar a calculadora
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col2:
+    # Criamos um contêiner com bordas para o visor
+    st.markdown("""
+    <div style="
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
         background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        position: relative;
-        overflow: hidden;
-    }
+        min-height: 50px;
+    ">
+    """, unsafe_allow_html=True)
     
-    .calc-display span {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 28px;
-        font-weight: bold;
-        color: black;
-    }
+    # Exibir a expressão
+    st.text(st.session_state.expression)
     
-    /* Grid de botões */
-    .calc-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 5px;
-    }
+    # Fechar o contêiner
+    st.markdown("</div>", unsafe_allow_html=True)
     
-    /* Estilo dos botões */
-    .calc-button {
-        height: 50px;
-        background-color: #f2f2f2;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+    # Botões da calculadora (usando ícones Unicode consistentes)
+    buttons = [
+        ["7", "8", "9", "\u00F7"],  # ícone de divisão
+        ["4", "5", "6", "\u00D7"],  # ícone de multiplicação
+        ["1", "2", "3", "\uFF0D"],  # ícone de subtração
+        ["0", ".", "=", "\uFF0B"],  # ícone de soma
+        ["%", "\u221a", "C", "Del"]
+    ]
     
-    .calc-button:hover {
-        background-color: #e6e6e6;
-    }
-    
-    /* Ajustes para dispositivos móveis */
-    @media (max-width: 480px) {
-        .calculator {
-            max-width: 100%;
-        }
-        
-        .calc-button {
-            height: 45px;
-            font-size: 18px;
-        }
-        
-        .calc-display {
-            height: 50px;
-        }
-        
-        .calc-display span {
-            font-size: 24px;
-        }
-    }
-    
-    /* Ainda mais compacto para telas muito pequenas */
-    @media (max-width: 320px) {
-        .calc-button {
-            height: 40px;
-            font-size: 16px;
-        }
-        
-        .calc-grid {
-            gap: 3px;
-        }
-    }
-</style>
-""", unsafe_allow_html=True)
-
-# Criando a calculadora com HTML puro para controle total do layout
-st.markdown(f"""
-<div class="calculator">
-    <div class="calc-display">
-        <span>{st.session_state.expression}</span>
-    </div>
-    <div class="calc-grid">
-""", unsafe_allow_html=True)
-
-# Gerando HTML para cada botão
-for row in buttons:
-    for button in row:
-        button_value = button
-        button_display = button
-        # Criando um ID único para cada botão
-        button_id = f"btn_{button}"
-        
-        st.markdown(f"""
-        <div class="calc-button" id="{button_id}" onclick="handleClick('{button_value}')">{button_display}</div>
-        """, unsafe_allow_html=True)
-
-# Fechando os contêineres
-st.markdown("""
-    </div>
-</div>
-
-<script>
-    // Função para lidar com cliques nos botões
-    function handleClick(value) {
-        // Esta função é executada no navegador
-        // Enviando ação para o Streamlit via formulário
-        const data = new FormData();
-        data.append('acao', value);
-        fetch('', {
-            method: 'POST',
-            body: data
-        }).then(response => {
-            // Recarregar a página para aplicar a mudança
-            window.location.reload();
-        });
-    }
-</script>
-""", unsafe_allow_html=True)
-
-# Formulário oculto para capturar cliques nos botões HTML
-with st.form(key='calc_form', clear_on_submit=True):
-    acao = st.text_input("Ação", key="acao", label_visibility="collapsed")
-    submitted = st.form_submit_button("Enviar", style="display:none;")
-    
-    if submitted and acao:
-        processar_acao(acao)
+    # Loop para adicionar os botões
+    for row in buttons:
+        cols = st.columns(4)  # Sempre 4 colunas por linha
+        for i, button in enumerate(row):
+            with cols[i]:
+                if st.button(button, key=f"btn_{button}_{buttons.index(row)}_{i}"):
+                    if button == "=":
+                        # Quando o usuário clicar em igual, faz o cálculo
+                        st.session_state.expression = str(calcular(st.session_state.expression))
+                    elif button == "C":
+                        # Limpa a expressão
+                        st.session_state.expression = ""
+                    elif button == "Del":
+                        # Apaga o último caractere
+                        st.session_state.expression = st.session_state.expression[:-1]
+                    elif button == "\u221a":
+                        # Calcula a raiz quadrada diretamente
+                        try:
+                            if st.session_state.expression:
+                                resultado = math.sqrt(float(st.session_state.expression))
+                                # Remover ponto e zero se o resultado for inteiro
+                                st.session_state.expression = str(int(resultado) if resultado.is_integer() else resultado)
+                            else:
+                                st.session_state.expression = "Erro: Vazio"
+                        except ValueError:
+                            st.session_state.expression = "Erro"
+                    elif button == "%":
+                        # Adiciona o símbolo de porcentagem para ser tratado na função calcular
+                        atualizar_expressao("%")
+                    else:
+                        # Adiciona o número ou operador personalizado à expressão
+                        atualizar_expressao(button)
+                    
+                    # Recarregar a página para atualizar
+                    st.rerun()
 
 # Informações de contato
 st.markdown("""
 ---
-#### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
-Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
-""")
+<div style='text-align: center;'>
+<h4>Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem</h4>
+<p>Por Ary Ribeiro. Contato, através do email: <a href='mailto:aryribeiro@gmail.com'>aryribeiro@gmail.com</a></p>
+</div>
+""", unsafe_allow_html=True)
