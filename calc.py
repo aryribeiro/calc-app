@@ -207,5 +207,5 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("""
 ---
 #### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
-Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
+Por Ary Ribeiro.. Contato, através do email: aryribeiro@gmail.com
 """)
