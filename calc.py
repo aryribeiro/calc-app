@@ -39,7 +39,7 @@ st.markdown(
 st.title("Calc-App!")
 
 st.markdown("""
-💬 Bem-vindos ao meu web app!
+💬 caso esteja no smartphone, deixe-o na horizontal p/ melhor visualização
 """)
 
 # CSS para estilizar a interface da calculadora com foco em responsividade
