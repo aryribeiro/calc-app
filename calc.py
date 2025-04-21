@@ -43,6 +43,7 @@ st.markdown("""
 """)
 
 # CSS para estilizar a interface da calculadora com foco em responsividade
+# Adicionando regras específicas para forçar o layout em grade no mobile
 st.markdown("""
     <style>
     /* Estilo base dos botões */
@@ -92,21 +93,36 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    /* Melhoria para visualização em dispositivos móveis */
+    /* CORREÇÃO PARA SMARTPHONES - Override de regras específicas do Streamlit */
     @media (max-width: 768px) {
-        /* Ajustes para o contêiner principal */
-        .calculator-container {
-            max-width: 100%;
-            padding: 0 5px;
+        /* Forçar elementos horizontais em smartphones */
+        .row-widget.stHorizontal {
+            flex-direction: row !important;
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
         }
         
-        /* Ajustes para os botões */
+        /* Forçar colunas a ter largura igual */
+        .row-widget.stHorizontal [data-testid="column"] {
+            width: 25% !important; /* Força 4 colunas iguais (100% ÷ 4) */
+            min-width: unset !important;
+            flex: 1 !important;
+        }
+        
+        /* Ajustes para botões serem mais compactos */
         .stButton>button {
             width: 95%;
             height: 45px;
             font-size: 24px;
             padding: 0;
             margin: 2px 0;
+        }
+        
+        /* Ajuste para o contêiner principal */
+        .calculator-container {
+            max-width: 100%;
+            padding: 0 5px;
         }
         
         /* Ajustes para o display */
@@ -118,11 +134,6 @@ st.markdown("""
             font-size: 28px;
         }
         
-        /* Reduz espaço entre colunas */
-        .row-widget.stHorizontal {
-            gap: 1px !important;
-        }
-        
         /* Redução de padding geral para aproveitar melhor o espaço */
         .main .block-container {
             padding-left: 0.5rem;
@@ -131,10 +142,10 @@ st.markdown("""
             max-width: 100%;
         }
         
-        /* Ajuste para orientação vertical em smartphones */
-        @media (max-height: 900px) and (max-width: 480px) {
+        /* Ajustes para telas muito pequenas */
+        @media (max-width: 480px) {
             .stButton>button {
-                height: 35px;
+                height: 40px;
                 font-size: 20px;
                 width: 98%;
             }
@@ -214,7 +225,7 @@ buttons = [
     ("%", "\u221a", "C", "Del")
 ]
 
-# Exibir os botões com colunas ajustadas - usando gap="small" para smartphones
+# Exibir os botões com colunas ajustadas
 colunas = [st.columns(4, gap="small") for _ in range(len(buttons))]
 
 # Loop para adicionar os botões
