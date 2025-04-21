@@ -21,6 +21,12 @@ st.markdown(
             display: flex;
             justify-content: center;
         }}
+        /* Reduz o tamanho do logo em dispositivos móveis */
+        @media (max-width: 768px) {{
+            .centered-logo img {{
+                width: 200px;
+            }}
+        }}
     </style>
     <div class="centered-logo">
         <img src="{logo_url}" width="300">
@@ -33,13 +39,13 @@ st.markdown(
 st.title("Calc-App!")
 
 st.markdown("""
-💬 caso esteja usando smartphone, mantenha-o deitado p/ melhor visualização.
+💬 Bem-vindos ao meu web app!
 """)
 
-# CSS para estilizar a interface da calculadora
+# CSS para estilizar a interface da calculadora com foco em responsividade
 st.markdown("""
     <style>
-    /* Estilo dos botões */
+    /* Estilo base dos botões */
     .stButton>button {
         height: 40px;
         width: 80%;
@@ -88,12 +94,59 @@ st.markdown("""
     
     /* Melhoria para visualização em dispositivos móveis */
     @media (max-width: 768px) {
-        .calculator-display h2 {
-            font-size: 32px;
+        /* Ajustes para o contêiner principal */
+        .calculator-container {
+            max-width: 100%;
+            padding: 0 5px;
         }
+        
+        /* Ajustes para os botões */
+        .stButton>button {
+            width: 95%;
+            height: 45px;
+            font-size: 24px;
+            padding: 0;
+            margin: 2px 0;
+        }
+        
+        /* Ajustes para o display */
+        .calculator-display {
+            height: 45px;
+        }
+        
+        .calculator-display h2 {
+            font-size: 28px;
+        }
+        
+        /* Reduz espaço entre colunas */
+        .row-widget.stHorizontal {
+            gap: 1px !important;
+        }
+        
+        /* Redução de padding geral para aproveitar melhor o espaço */
         .main .block-container {
-            padding-left: 1rem;
-            padding-right: 1rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            padding-top: 1rem;
+            max-width: 100%;
+        }
+        
+        /* Ajuste para orientação vertical em smartphones */
+        @media (max-height: 900px) and (max-width: 480px) {
+            .stButton>button {
+                height: 35px;
+                font-size: 20px;
+                width: 98%;
+            }
+            
+            .calculator-display {
+                height: 40px;
+                padding: 5px 10px;
+            }
+            
+            .calculator-display h2 {
+                font-size: 24px;
+            }
         }
     }
     </style>
@@ -161,7 +214,7 @@ buttons = [
     ("%", "\u221a", "C", "Del")
 ]
 
-# Exibir os botões com colunas ajustadas
+# Exibir os botões com colunas ajustadas - usando gap="extra small" para smartphones
 colunas = [st.columns(4, gap="small") for _ in range(len(buttons))]
 
 # Loop para adicionar os botões
@@ -207,5 +260,5 @@ st.markdown('</div>', unsafe_allow_html=True)
 st.markdown("""
 ---
 #### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
-Por Ary Ribeiro.. Contato, através do email: aryribeiro@gmail.com
+Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
 """)
