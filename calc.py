@@ -3,6 +3,13 @@ import math
 import re
 from simpleeval import simple_eval
 
+# Configuração da página
+st.set_page_config(
+    page_title="Calc-App!",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
 # URL do logo
 logo_url = "https://i.imgur.com/yyDN6aD.png"
 
@@ -26,12 +33,13 @@ st.markdown(
 st.title("Calc-App!")
 
 st.markdown("""
-💬caso esteja usando smartphone, mantenha-o deitado p/ melhor visualização.
+💬 caso esteja usando smartphone, mantenha-o deitado p/ melhor visualização.
 """)
 
 # CSS para estilizar a interface da calculadora
 st.markdown("""
     <style>
+    /* Estilo dos botões */
     .stButton>button {
         height: 40px;
         width: 80%;
@@ -42,14 +50,52 @@ st.markdown("""
         border: 1px solid #ccc;
         margin: 1px;
     }
-
-    .stTextInput>div>div>input {
-        font-size: 24px;
-        height: 50px;
-        text-align: right;
+    
+    /* Define uma largura máxima para o contêiner da calculadora */
+    .calculator-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 0;
     }
-
-    .stButton { margin: 0; }
+    
+    /* Estilo para o display da calculadora */
+    .calculator-display {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        width: calc(100% - 30px); /* Ajusta para incluir o padding */
+        max-width: 100%;
+    }
+    
+    .calculator-display h2 {
+        margin: 0;
+        padding: 0;
+        font-size: 38px;
+        color: black;
+        font-weight: bold;
+    }
+    
+    /* Remove padding extra das colunas do Streamlit */
+    .row-widget.stButton {
+        padding: 0 !important;
+    }
+    
+    /* Melhoria para visualização em dispositivos móveis */
+    @media (max-width: 768px) {
+        .calculator-display h2 {
+            font-size: 32px;
+        }
+        .main .block-container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -93,6 +139,19 @@ def atualizar_expressao(valor):
             return  # Não adiciona o operador
     st.session_state.expression += valor
 
+# Contêiner da calculadora para controlar a largura
+st.markdown('<div class="calculator-container">', unsafe_allow_html=True)
+
+# Exibir o display da calculadora usando um contêiner personalizado
+st.markdown(
+    f"""
+    <div class="calculator-display">
+        <h2>{st.session_state.expression}</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Botões da calculadora (usando ícones Unicode consistentes)
 buttons = [
     ("7", "8", "9", "\u00F7"),  # ícone de divisão
@@ -103,13 +162,14 @@ buttons = [
 ]
 
 # Exibir os botões com colunas ajustadas
-colunas = [st.columns(4) for _ in range(len(buttons))]
+colunas = [st.columns(4, gap="small") for _ in range(len(buttons))]
 
 # Loop para adicionar os botões
 for i, row in enumerate(buttons):
     for j, button in enumerate(row):
         with colunas[i][j]:
-            if st.button(button):
+            # Adicionando chaves únicas aos botões
+            if st.button(button, key=f"btn_{button}_{i}_{j}"):
                 if button == "=":
                     # Quando o usuário clicar em igual, faz o cálculo
                     st.session_state.expression = str(calcular(st.session_state.expression))
@@ -136,10 +196,12 @@ for i, row in enumerate(buttons):
                 else:
                     # Adiciona o número ou operador personalizado à expressão
                     atualizar_expressao(button)
+                
+                # Atualiza a página para mostrar a expressão atualizada
+                st.rerun()
 
-# Exibir o resultado
-if st.session_state.expression:
-    st.markdown(f"<h3>Resultado: {st.session_state.expression}</h3>", unsafe_allow_html=True)
+# Fechar o contêiner da calculadora
+st.markdown('</div>', unsafe_allow_html=True)
 
 # Informações de contato
 st.markdown("""
