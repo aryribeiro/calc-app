@@ -7,6 +7,7 @@ from simpleeval import simple_eval
 st.set_page_config(
     page_title="Calc-App!",
     layout="centered",
+    page_icon="🧮",
     initial_sidebar_state="collapsed"
 )
 
@@ -255,6 +256,38 @@ st.markdown('</div>', unsafe_allow_html=True)
 # Informações de contato
 st.markdown("""
 ---
-#### Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
+#### 🧮 Calc-App! | Calculadora Web c/ raiz quadrada e porcentagem
 Por Ary Ribeiro. Contato, através do email: aryribeiro@gmail.com
 """)
+
+st.markdown("""
+<style>
+    .main {
+        background-color: #ffffff;
+        color: #333333;
+    }
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 0rem;
+    }
+    /* Esconde completamente todos os elementos da barra padrão do Streamlit */
+    header {display: none !important;}
+    footer {display: none !important;}
+    #MainMenu {display: none !important;}
+    /* Remove qualquer espaço em branco adicional */
+    div[data-testid="stAppViewBlockContainer"] {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    div[data-testid="stVerticalBlock"] {
+        gap: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    /* Remove quaisquer margens extras */
+    .element-container {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
